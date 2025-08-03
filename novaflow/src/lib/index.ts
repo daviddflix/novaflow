@@ -1,8 +1,12 @@
 // Utilities, constants, and permission logic
 
 // Permission utilities will be implemented here
+interface PermissionUser {
+  role: 'admin' | 'member' | 'viewer';
+}
+
 export const permissions = {
-  canEditProject: (user: any, workspace: any) => {
+  canEditProject: (user: PermissionUser) => {
     return user.role === 'admin' || user.role === 'member';
   },
   // More permission functions will be added
