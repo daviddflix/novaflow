@@ -1,7 +1,7 @@
 // API services and Supabase wrappers
 
-// Supabase client will be configured here
-// export { supabase } from './supabase';
+// Supabase client configured via environment variables
+export { supabase } from './supabase';
 
 // Service abstractions will be implemented here
 export const apiService = {
