@@ -1,8 +1,29 @@
 // Utilities, constants, and permission logic
 
+export { logActivity } from './activity';
+
 // Permission utilities will be implemented here
+
+/**
+ * Basic representation of a user used for permission checks.
+ * Additional fields can be added as needed.
+ */
+interface User {
+  role: string;
+}
+
+/**
+ * Placeholder workspace type.
+ * The workspace is currently unused but kept for API compatibility with
+ * future permission helpers.
+ */
+interface Workspace {
+  id?: string;
+}
+
 export const permissions = {
-  canEditProject: (user: any, workspace: any) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  canEditProject: (user: User, _workspace: Workspace) => {
     return user.role === 'admin' || user.role === 'member';
   },
   // More permission functions will be added
