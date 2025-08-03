@@ -1,10 +1,18 @@
+import { LoginPage, AcceptInvitePage, ResetPasswordPage } from './features/auth';
+import { useRouter } from './lib/router';
+
 function App() {
-  return (
-    <div className="app">
-      <h1>NovaFlow</h1>
-      <p>Internal Collaboration Platform</p>
-    </div>
-  );
+  const { path } = useRouter();
+
+  switch (path) {
+    case '/accept-invite':
+      return <AcceptInvitePage />;
+    case '/reset-password':
+      return <ResetPasswordPage />;
+    case '/login':
+    default:
+      return <LoginPage />;
+  }
 }
 
-export default App; 
+export default App;
