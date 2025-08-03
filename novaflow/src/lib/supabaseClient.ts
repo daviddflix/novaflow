@@ -11,6 +11,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 /**
  * Client with service role key. Must only be used in trusted server-side code.
  * Exposing this key in the browser is a security risk.
+ * Required for admin operations like inviteUserByEmail.
  */
 const serviceKey = import.meta.env.VITE_SUPABASE_SERVICE_ROLE_KEY as string;
 export const supabaseAdmin = createClient(supabaseUrl, serviceKey);

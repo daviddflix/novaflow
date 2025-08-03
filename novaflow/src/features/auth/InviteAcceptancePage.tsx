@@ -1,9 +1,11 @@
-import { PasswordInput, Button, Stack } from '@mantine/core';
+import { PasswordInput, Button, Stack, Anchor, Title, Container } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
+import { Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabaseClient';
+import { IconKey, IconLock, IconArrowLeft } from '../../lib/icons';
 
-export const InviteAcceptancePage = () => {
+export const SetPasswordPage = () => {
   const form = useForm({
     initialValues: { password: '', confirm: '' },
     validate: {
@@ -22,12 +24,39 @@ export const InviteAcceptancePage = () => {
   };
 
   return (
-    <form onSubmit={form.onSubmit(handleSubmit)}>
-      <Stack>
-        <PasswordInput label="Password" {...form.getInputProps('password')} />
-        <PasswordInput label="Confirm Password" {...form.getInputProps('confirm')} />
-        <Button type="submit">Accept Invite</Button>
-      </Stack>
-    </form>
+    <Container size="xs" py="xl">
+      <Title order={1} ta="center" mb="xl">
+        Set Your Password
+      </Title>
+      <form onSubmit={form.onSubmit(handleSubmit)}>
+        <Stack gap="lg">
+          <PasswordInput 
+            label="Password" 
+            size="md"
+            leftSection={<IconLock size={16} />}
+            {...form.getInputProps('password')} 
+          />
+          <PasswordInput 
+            label="Confirm Password" 
+            size="md"
+            leftSection={<IconLock size={16} />}
+            {...form.getInputProps('confirm')} 
+          />
+          <Button 
+            type="submit" 
+            size="md" 
+            fullWidth
+            leftSection={<IconKey size={18} />}
+            mt="md"
+          >
+            Set Password
+          </Button>
+          <Anchor component={Link} to="/login" size="sm" ta="center">
+            <IconArrowLeft size={14} style={{ marginRight: 4 }} />
+            Back to Login
+          </Anchor>
+        </Stack>
+      </form>
+    </Container>
   );
 };

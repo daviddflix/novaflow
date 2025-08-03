@@ -3,7 +3,3 @@
 export { AuthProvider, useAuth } from './AuthContext';
 
 // Additional context providers (e.g., notifications) can be exported here
-
-export const contextProviders = {
-  AuthProvider,
-};

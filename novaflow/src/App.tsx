@@ -1,9 +1,14 @@
+import { Routes, Route } from 'react-router-dom';
+import { LoginPage, SetPasswordPage, PasswordResetPage, FirstAdminSetup } from './features/auth';
+
 function App() {
   return (
-    <div className="app">
-      <h1>NovaFlow</h1>
-      <p>Internal Collaboration Platform</p>
-    </div>
+    <Routes>
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/accept-invite" element={<SetPasswordPage />} />
+      <Route path="/reset-password" element={<PasswordResetPage />} />
+      <Route path="/setup" element={<FirstAdminSetup />} /> {/* TODO: Remove this once we have a proper landing page */}
+    </Routes>
   );
 }
 

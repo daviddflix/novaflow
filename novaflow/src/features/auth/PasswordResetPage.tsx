@@ -1,7 +1,9 @@
-import { TextInput, Button, Stack } from '@mantine/core';
+import { TextInput, Button, Stack, Anchor, Title, Container } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
+import { Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabaseClient';
+import { IconMail, IconArrowLeft } from '../../lib/icons';
 
 export const PasswordResetPage = () => {
   const form = useForm({
@@ -21,11 +23,34 @@ export const PasswordResetPage = () => {
   };
 
   return (
-    <form onSubmit={form.onSubmit(handleSubmit)}>
-      <Stack>
-        <TextInput label="Email" placeholder="you@example.com" {...form.getInputProps('email')} />
-        <Button type="submit">Send Reset Link</Button>
-      </Stack>
-    </form>
+    <Container size="xs" py="xl">
+      <Title order={1} ta="center" mb="xl">
+        Reset Password
+      </Title>
+      <form onSubmit={form.onSubmit(handleSubmit)}>
+        <Stack gap="lg">
+          <TextInput 
+            label="Email" 
+            placeholder="you@example.com" 
+            size="md"
+            leftSection={<IconMail size={16} />}
+            {...form.getInputProps('email')} 
+          />
+          <Button 
+            type="submit" 
+            size="md" 
+            fullWidth
+            leftSection={<IconMail size={18} />}
+            mt="md"
+          >
+            Send Reset Link
+          </Button>
+          <Anchor component={Link} to="/login" size="sm" ta="center">
+            <IconArrowLeft size={14} style={{ marginRight: 4 }} />
+            Back to Login
+          </Anchor>
+        </Stack>
+      </form>
+    </Container>
   );
 };

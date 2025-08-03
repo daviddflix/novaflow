@@ -1,4 +1,7 @@
 export { LoginPage } from './LoginPage';
-export { InviteAcceptancePage } from './InviteAcceptancePage';
+export { SetPasswordPage } from './InviteAcceptancePage';
 export { PasswordResetPage } from './PasswordResetPage';
+export { AdminInvitePage } from './AdminInvitePage';
+export { FirstAdminSetup } from './FirstAdminSetup';
 export { inviteUser, registerWithMagicLink } from './invite';
+export { createFirstAdmin, hasExistingUsers } from './bootstrap';

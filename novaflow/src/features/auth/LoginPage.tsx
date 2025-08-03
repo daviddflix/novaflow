@@ -1,7 +1,9 @@
-import { TextInput, PasswordInput, Button, Stack } from '@mantine/core';
+import { TextInput, PasswordInput, Button, Stack, Anchor, Title, Container } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { IconLogin, IconMail, IconLock } from '../../lib/icons';
 
 export const LoginPage = () => {
   const { login } = useAuth();
@@ -23,12 +25,39 @@ export const LoginPage = () => {
   };
 
   return (
-    <form onSubmit={form.onSubmit(handleSubmit)}>
-      <Stack>
-        <TextInput label="Email" placeholder="you@example.com" {...form.getInputProps('email')} />
-        <PasswordInput label="Password" {...form.getInputProps('password')} />
-        <Button type="submit">Login</Button>
-      </Stack>
-    </form>
+    <Container size="xs" py="xl">
+      <Title order={1} ta="center" mb="xl">
+        Login to NovaFlow
+      </Title>
+      <form onSubmit={form.onSubmit(handleSubmit)}>
+        <Stack gap="lg">
+          <TextInput 
+            label="Email" 
+            placeholder="you@example.com" 
+            size="md"
+            leftSection={<IconMail size={16} />}
+            {...form.getInputProps('email')} 
+          />
+          <PasswordInput 
+            label="Password" 
+            size="md"
+            leftSection={<IconLock size={16} />}
+            {...form.getInputProps('password')} 
+          />
+          <Button 
+            type="submit" 
+            size="md" 
+            fullWidth
+            leftSection={<IconLogin size={18} />}
+            mt="md"
+          >
+            Login
+          </Button>
+          <Anchor component={Link} to="/reset-password" size="sm" ta="center">
+            Forgot your password?
+          </Anchor>
+        </Stack>
+      </form>
+    </Container>
   );
 };
