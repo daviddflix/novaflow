@@ -2,7 +2,7 @@
 
 // Permission utilities will be implemented here
 export const permissions = {
-  canEditProject: (user: any, workspace: any) => {
+  canEditProject: (user: { role: string }) => {
     return user.role === 'admin' || user.role === 'member';
   },
   // More permission functions will be added
