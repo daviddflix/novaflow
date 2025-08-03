@@ -93,6 +93,8 @@ This document describes the database schema for NovaFlow, implemented in Supabas
 ## FileUploads
 - `id` (UUID, PK)
 - `user_id` (UUID, FK → users.id)
+- `task_id` (UUID, FK → tasks.id, nullable)
+- `project_id` (UUID, FK → projects.id, nullable)
 - `file_url` (TEXT)
 - `type` (TEXT)
 - `created_at` (TIMESTAMP)

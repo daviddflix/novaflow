@@ -17,8 +17,8 @@
 3. **Download/View:** User clicks file to download/view
 
 ## Supabase Usage
-- Supabase Storage for file data
-- `FileUploads` table for metadata
+- Supabase Storage buckets: `attachments` for task/project files and `avatars` for user images
+- `FileUploads` table for metadata linking uploads to tasks or projects
 
 ## UI/UX Notes
 - File picker for uploads
@@ -27,7 +27,7 @@
 
 ## Edge Cases
 - Invalid file type/size (validate client-side)
-- Orphaned files (clean up in future)
+- Orphaned files (periodic cleanup script removes unreferenced storage objects)
 
 ## Testing
 - Upload/download via UI

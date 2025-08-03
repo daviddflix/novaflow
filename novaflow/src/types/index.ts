@@ -55,4 +55,16 @@ export interface TaskDependency {
   type: 'blocks' | 'relates_to';
 }
 
+// File upload metadata stored in Supabase
+export interface FileUpload {
+  id: string;
+  user_id: string;
+  file_url: string;
+  type: string;
+  created_at: string;
+  workspace_id: string;
+  task_id?: string;
+  project_id?: string;
+}
+
 // Additional types will be added as features are developed

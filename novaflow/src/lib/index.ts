@@ -1,10 +1,11 @@
 // Utilities, constants, and permission logic
 
 // Permission utilities will be implemented here
+import type { User } from '../types';
+
 export const permissions = {
-  canEditProject: (user: any, workspace: any) => {
-    return user.role === 'admin' || user.role === 'member';
-  },
+  canEditProject: (user: User): boolean =>
+    user.role === 'admin' || user.role === 'member',
   // More permission functions will be added
 };
 
