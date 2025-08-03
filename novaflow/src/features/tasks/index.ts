@@ -1,0 +1,5 @@
+export * from './types'
+export * from './hooks'
+export { TaskBoard } from './components/TaskBoard'
+export { TaskForm } from './components/TaskForm'
+export { DependencyModal } from './components/DependencyModal'
