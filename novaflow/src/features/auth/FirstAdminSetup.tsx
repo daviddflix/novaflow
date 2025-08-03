@@ -1,7 +1,7 @@
 import { TextInput, PasswordInput, Button, Stack, Title, Container, Text, Alert, Loader, Center } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useState, useEffect } from 'react';
-import { IconUserPlus, IconMail, IconLock, IconAlertCircle } from '../../lib/icons';
+import { IconUserPlus, IconMail, IconLock, IconAlertCircle, IconUser } from '../../lib/icons';
 import { createFirstAdmin, hasExistingUsers } from './bootstrap';
 
 export const FirstAdminSetup = () => {
@@ -10,8 +10,9 @@ export const FirstAdminSetup = () => {
   const [checkError, setCheckError] = useState<string | null>(null);
 
   const form = useForm({
-    initialValues: { email: '', password: '', confirmPassword: '' },
+    initialValues: { name: '', email: '', password: '', confirmPassword: '' },
     validate: {
+      name: (value) => (value.trim().length >= 2 ? null : 'Name must be at least 2 characters'),
       email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
       password: (value) => (value.length >= 6 ? null : 'Password must be at least 6 characters'),
       confirmPassword: (value, values) => 
@@ -36,15 +37,24 @@ export const FirstAdminSetup = () => {
     checkUsers();
   }, []);
 
-  const handleSubmit = async (values: { email: string; password: string }) => {
+  const handleSubmit = async (values: { name: string; email: string; password: string }) => {
     setLoading(true);
-    const { error } = await createFirstAdmin(values.email, values.password);
-    setLoading(false);
-    
-    if (!error) {
-      setShouldShow(false);
-      // Redirect to login or dashboard
-      window.location.href = '/login';
+    try {
+      const result = await createFirstAdmin(values.email, values.password, values.name);
+      
+      if (result.error) {
+        console.error('Failed to create admin:', result.error);
+        // Error notification is already shown in createFirstAdmin
+      } else {
+        // Success! The page should automatically hide after user creation
+        setShouldShow(false);
+        // Optionally redirect to login page
+        window.location.href = '/login';
+      }
+    } catch (error) {
+      console.error('Unexpected error:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -98,7 +108,7 @@ export const FirstAdminSetup = () => {
           Could not verify user status: {checkError}. Proceeding with setup.
         </Alert>
       )}
-
+      
       <Alert 
         icon={<IconAlertCircle size={16} />} 
         title="First Time Setup" 
@@ -111,6 +121,13 @@ export const FirstAdminSetup = () => {
       
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <Stack gap="lg">
+          <TextInput 
+            label="Full Name" 
+            placeholder="John Doe" 
+            size="md"
+            leftSection={<IconUser size={16} />}
+            {...form.getInputProps('name')} 
+          />
           <TextInput 
             label="Admin Email" 
             placeholder="admin@company.com" 

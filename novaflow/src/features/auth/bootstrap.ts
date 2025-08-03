@@ -9,13 +9,16 @@ import { notifications } from '@mantine/notifications';
  * 2. Create user directly in Supabase Studio
  * 3. Use environment variables for automated setup
  */
-export const createFirstAdmin = async (email: string, password: string) => {
+export const createFirstAdmin = async (email: string, password: string, name?: string) => {
   try {
-    // Create the user with admin privileges
+    // Create the user with admin privileges and store name in metadata
     const { data: user, error: createError } = await supabaseAdmin.auth.admin.createUser({
       email,
       password,
       email_confirm: true, // Skip email confirmation
+      user_metadata: {
+        name: name || email.split('@')[0] // Use provided name or extract from email
+      }
     });
 
     if (createError) {
@@ -26,15 +29,32 @@ export const createFirstAdmin = async (email: string, password: string) => {
       return { error: createError };
     }
 
-    // TODO: Add user to admin role in your users table
-    // This depends on your user roles implementation
+    // Create a default workspace for the first admin
+    const { data: workspace, error: workspaceError } = await supabaseAdmin
+      .from('Workspaces')
+      .insert({
+        name: 'Default Workspace',
+        created_by: user.user?.id
+      })
+      .select()
+      .single();
+
+    if (workspaceError) {
+      notifications.show({ 
+        message: `Failed to create workspace: ${workspaceError.message}`, 
+        color: 'red' 
+      });
+      return { error: workspaceError };
+    }
+
+    // The WorkspaceMembers entry is created automatically by the trigger
     
     notifications.show({ 
-      message: 'First admin created successfully', 
+      message: 'First admin and workspace created successfully', 
       color: 'green' 
     });
     
-    return { user, error: null };
+    return { user, workspace, error: null };
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     notifications.show({ 
