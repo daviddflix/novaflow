@@ -1,3 +1,8 @@
+# Environment files (should be first!)
+.env
+.env.local
+.env.*.local
+
 # Logs
 logs
 *.log
