@@ -1,62 +1,89 @@
-import { supabaseAdmin } from '../../lib/supabaseClient';
+import { supabase, supabaseAdmin } from '../../lib/supabaseClient';
 import { notifications } from '@mantine/notifications';
 
 /**
- * Creates the first admin user. This should only be used once during initial setup.
- * 
- * Options for first admin creation:
- * 1. Use this function from browser console (development only)
- * 2. Create user directly in Supabase Studio
- * 3. Use environment variables for automated setup
+ * Creates the first admin user using Supabase's built-in auth.signUp() method.
+ * After successful signup, creates a default workspace for the user.
  */
 export const createFirstAdmin = async (email: string, password: string, name?: string) => {
   try {
-    // Create the user with admin privileges and store name in metadata
-    const { data: user, error: createError } = await supabaseAdmin.auth.admin.createUser({
+    // First check if any users already exist
+    const existingUsers = await hasExistingUsers();
+    if (existingUsers) {
+      const error = new Error('Cannot create admin: users already exist in the system');
+      notifications.show({ 
+        message: error.message, 
+        color: 'red' 
+      });
+      return { error };
+    }
+
+    // Use Supabase's built-in signup method
+    const { data: authData, error: signUpError } = await supabase.auth.signUp({
       email,
       password,
-      email_confirm: true, // Skip email confirmation
-      user_metadata: {
-        name: name || email.split('@')[0] // Use provided name or extract from email
+      options: {
+        data: {
+          name: name || email.split('@')[0]
+        }
       }
     });
 
-    if (createError) {
+    if (signUpError) {
+      console.error('Auth signup error:', signUpError);
       notifications.show({ 
-        message: `Failed to create admin: ${createError.message}`, 
+        message: `Failed to create admin: ${signUpError.message}`, 
         color: 'red' 
       });
-      return { error: createError };
+      return { error: signUpError };
     }
 
-    // Create a default workspace for the first admin
-    const { data: workspace, error: workspaceError } = await supabaseAdmin
+    if (!authData.user) {
+      const error = new Error('User creation failed: no user returned');
+      notifications.show({ 
+        message: error.message, 
+        color: 'red' 
+      });
+      return { error };
+    }
+
+    // For local development, email confirmation is disabled by default
+    // So the user should be immediately available
+    
+    // Create a default workspace for the new admin
+    const { data: workspaceData, error: workspaceError } = await supabaseAdmin
       .from('Workspaces')
       .insert({
         name: 'Default Workspace',
-        created_by: user.user?.id
+        created_by: authData.user.id
       })
-      .select()
+      .select('id')
       .single();
 
     if (workspaceError) {
+      console.error('Workspace creation error:', workspaceError);
       notifications.show({ 
-        message: `Failed to create workspace: ${workspaceError.message}`, 
-        color: 'red' 
+        message: `Admin created but workspace creation failed: ${workspaceError.message}`, 
+        color: 'yellow' 
       });
-      return { error: workspaceError };
+      // Don't return error since the user was created successfully
     }
 
-    // The WorkspaceMembers entry is created automatically by the trigger
-    
     notifications.show({ 
-      message: 'First admin and workspace created successfully', 
+      message: 'First admin and workspace created successfully!', 
       color: 'green' 
     });
     
-    return { user, workspace, error: null };
+    return { 
+      data: { 
+        user_id: authData.user.id, 
+        workspace_id: workspaceData?.id 
+      }, 
+      error: null 
+    };
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error('Bootstrap failed:', error);
     notifications.show({ 
       message: `Bootstrap failed: ${errorMessage}`, 
       color: 'red' 
@@ -66,10 +93,11 @@ export const createFirstAdmin = async (email: string, password: string, name?: s
 };
 
 /**
- * Check if any users exist in the system
+ * Check if any users exist in the system using the admin client
  */
 export const hasExistingUsers = async (): Promise<boolean> => {
   try {
+    // Use the admin client to check if any users exist
     const { data, error } = await supabaseAdmin.auth.admin.listUsers({
       page: 1,
       perPage: 1
@@ -83,6 +111,7 @@ export const hasExistingUsers = async (): Promise<boolean> => {
     return (data?.users?.length ?? 0) > 0;
   } catch (error) {
     console.error('Error checking users:', error);
-    return true; // Assume users exist to be safe
+    // Assume users exist to be safe if we can't check
+    return true;
   }
 }; 

@@ -1,5 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
-import { LoginPage, SetPasswordPage, PasswordResetPage, FirstAdminSetup } from './features/auth';
+import { LoginPage, SetPasswordPage, PasswordResetPage, PasswordResetConfirmPage, FirstAdminSetup } from './features/auth';
 
 function App() {
   return (
@@ -7,7 +7,8 @@ function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/accept-invite" element={<SetPasswordPage />} />
       <Route path="/reset-password" element={<PasswordResetPage />} />
-      <Route path="/setup" element={<FirstAdminSetup />} /> {/* TODO: Remove this once we have a proper landing page */}
+      <Route path="/reset-password/confirm" element={<PasswordResetConfirmPage />} />
+      <Route path="/" element={<FirstAdminSetup />} /> {/* TODO: Remove in production */}
     </Routes>
   );
 }

@@ -44,6 +44,8 @@
  * • Comprehensive activity logging for audit trails
  * • Full-text search index maintenance
  * • Graceful handling of concurrent operations
+ * 
+ * NOTE: Bootstrap functions removed - using Supabase's built-in auth.signUp() instead
  */
 
 CREATE OR REPLACE FUNCTION handle_new_user()

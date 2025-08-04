@@ -1,0 +1,71 @@
+# Supabase Production Configuration
+# Copy this to config.toml when deploying to production
+
+project_id = "internal-collaboration-platform"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+shadow_port = 54320
+major_version = 15
+
+[studio]
+enabled = true
+port = 54323
+api_url = "http://127.0.0.1"
+
+[inbucket]
+enabled = false  # Disable local email server
+
+[storage]
+enabled = true
+file_size_limit = "50MiB"
+
+[auth]
+enabled = true
+site_url = "https://yourcompany.com"  # Your production URL
+additional_redirect_urls = ["https://yourcompany.com"]
+jwt_expiry = 3600
+enable_signup = true
+enable_anonymous_sign_ins = false
+enable_manual_linking = false
+
+[auth.email]
+enable_signup = true
+double_confirm_changes = true
+enable_confirmations = true
+
+# Production SendGrid configuration
+[auth.email.smtp]
+host = "smtp.sendgrid.net"
+port = 587
+user = "apikey"
+pass = "env(GOTRUE_SMTP_PASS)"
+admin_email = "env(GOTRUE_SMTP_ADMIN_EMAIL)"
+sender_name = "NovaFlow"
+
+# Custom email templates
+[auth.email.template.invite]
+subject = "You've been invited to join {{ .SiteName }}"
+
+[auth.email.template.confirmation]
+subject = "Confirm your {{ .SiteName }} account"
+
+[auth.email.template.recovery]
+subject = "Reset your {{ .SiteName }} password"
+
+[auth.email.template.email_change]
+subject = "Confirm your new email address"
+
+[realtime]
+enabled = true
+ip_version = "IPv4"
+
+[analytics]
+enabled = false 

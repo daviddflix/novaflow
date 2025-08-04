@@ -1,0 +1,65 @@
+# Supabase local development configuration
+# This file configures the local Supabase instance
+
+project_id = "internal-collaboration-platform"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+shadow_port = 54320
+major_version = 15
+
+[studio]
+enabled = true
+port = 54323
+api_url = "http://127.0.0.1"
+
+[inbucket]
+enabled = true
+port = 54324
+smtp_port = 54325
+pop3_port = 54326
+
+[storage]
+enabled = true
+file_size_limit = "50MiB"
+
+[auth]
+enabled = true
+site_url = "http://localhost:5173"
+additional_redirect_urls = ["http://localhost:3000", "https://yourcompany.com"]
+jwt_expiry = 3600
+enable_signup = true
+enable_anonymous_sign_ins = false
+enable_manual_linking = false
+
+[auth.email]
+enable_signup = true
+double_confirm_changes = true
+enable_confirmations = true
+
+# Custom email templates
+[auth.email.template.invite]
+subject = "You've been invited to join {{ .SiteName }}"
+
+[auth.email.template.confirmation]
+subject = "Confirm your {{ .SiteName }} account"
+
+[auth.email.template.recovery]
+subject = "Reset your {{ .SiteName }} password"
+
+[auth.email.template.email_change]
+subject = "Confirm your new email address"
+
+[realtime]
+enabled = true
+ip_version = "IPv4"
+
+[analytics]
+enabled = false 

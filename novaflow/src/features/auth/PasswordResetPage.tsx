@@ -14,7 +14,9 @@ export const PasswordResetPage = () => {
   });
 
   const handleSubmit = async (values: { email: string }) => {
-    const { error } = await supabase.auth.resetPasswordForEmail(values.email);
+    const { error } = await supabase.auth.resetPasswordForEmail(values.email, {
+      redirectTo: `${window.location.origin}/reset-password/confirm`,
+    });
     if (error) {
       notifications.show({ message: error.message, color: 'red' });
     } else {

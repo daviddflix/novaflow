@@ -1,21 +1,100 @@
 # NovaFlow Supabase Database Setup
 
-This directory contains all database migrations and configuration for the NovaFlow collaboration platform. We work directly with cloud Supabase projects using the CLI.
+This directory contains all database migrations and configuration for the NovaFlow collaboration platform. We use **local Docker containers** for development with plans for **self-hosted infrastructure** in production.
 
-## 🚀 Quick Start
+## 🚀 Quick Start - Local Development
 
 ```bash
 # 1. Install Supabase CLI
 npm install -g supabase
 
-# 2. Login to Supabase CLI
-supabase login
+# 2. Start local Supabase (Docker required)
+supabase start
 
-# 3. Link to your project
-supabase link --project-ref YOUR_PROJECT_ID
+# 3. Apply migrations to local instance
+supabase db reset
 
-# 4. Apply migrations
-npm run db:push
+# 4. Access local services:
+# - Studio: http://localhost:54323
+# - API: http://localhost:54321
+# - DB: postgresql://postgres:postgres@localhost:54322/postgres
+```
+
+## 🐳 Local Development Setup
+
+We use Supabase's local development stack with Docker for:
+- **Isolated development** - Each developer has their own complete Supabase instance
+- **Faster iteration** - No network latency, instant resets
+- **Offline development** - Work without internet connection
+- **Safe experimentation** - Break things without affecting others
+
+### Local Services
+- **PostgreSQL** - Database on port 54322
+- **Kong Gateway** - API Gateway on port 54321  
+- **GoTrue** - Auth server
+- **PostgREST** - Auto-generated API
+- **Realtime** - WebSocket server
+- **Storage** - File storage
+- **Studio** - Database management UI on port 54323
+
+## 🏗️ Self-Hosting Plans
+
+For production, we're planning self-hosted Supabase infrastructure:
+- **Docker Compose** deployment on our own servers
+- **Full control** over data and infrastructure
+- **Custom configurations** for performance and security
+- **Cost optimization** for our specific use case
+
+## 📧 Email Configuration
+
+### Local Development
+For local development, emails are handled by **Inbucket** (built-in email server):
+- **Email UI**: http://localhost:54324
+- **No configuration needed** - works out of the box
+- All emails appear in Inbucket UI for testing
+
+### Production (Self-Hosted with SendGrid)
+
+For production deployment, we use **SendGrid** as our SMTP provider:
+
+#### 1. SendGrid Setup
+1. Create SendGrid account
+2. **Verify your sender identity** for `no-reply@aialphax.io`:
+   - Go to SendGrid Dashboard → Settings → Sender Authentication  
+   - Add and verify your domain OR single sender email
+   - **This step is crucial** - unverified senders will cause "550" errors
+3. Generate API key with "Mail Send" permissions
+4. Configure SPF/DKIM records for your domain
+
+#### 2. Environment Setup
+Create `supabase/.env` with your SendGrid credentials:
+
+```env
+# SendGrid API Configuration
+GOTRUE_SMTP_PASS=SG.your_sendgrid_api_key_here
+GOTRUE_SMTP_ADMIN_EMAIL=no-reply@aialphax.io
+```
+
+#### 3. Production Configuration
+Use `supabase/config.production.toml` for production deployment:
+
+```toml
+[auth.email.smtp]
+host = "smtp.sendgrid.net"
+port = 587
+user = "apikey"
+pass = "env(GOTRUE_SMTP_PASS)"
+admin_email = "env(GOTRUE_SMTP_ADMIN_EMAIL)"
+sender_name = "NovaFlow"
+```
+
+#### 4. Deploy to Production
+```bash
+# Copy production config
+cp supabase/config.production.toml supabase/config.toml
+
+# Deploy with SendGrid configuration
+supabase start
 ```
 
 ## 📁 Project Structure
